@@ -1,0 +1,269 @@
+{% if not user.is_authenticated %}
+<script>
+    window.location.replace("{% url 'login' %}");
+</script>
+{% endif %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Department | DMS CORE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --accent: #2dd4bf;
+            --bg-dark: #0f111a; 
+            --card-bg: rgba(23, 25, 35, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --input-bg: rgba(0, 0, 0, 0.3);
+            --danger: #ef4444;
+        }
+
+        :root.light-theme {
+            --primary: #4f46e5;
+            --bg-dark: #f1f5f9; 
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --input-bg: #f8fafc;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.3s ease; }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+        }
+
+        .form-card {
+            width: 100%;
+            max-width: 900px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 20px;
+        }
+
+        .header-bar h1 {
+            font-size: 1.7rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .full-width { grid-column: span 2; }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        input[readonly] {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-style: dashed;
+        }
+
+        /* Status Colors */
+        .status-active-glow { border-left: 4px solid var(--accent) !important; }
+        .status-inactive-glow { border-left: 4px solid var(--danger) !important; }
+
+        .btn-group {
+            margin-top: 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cancel-btn {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .cancel-btn:hover { color: var(--primary); }
+
+        .save-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        @media (max-width: 650px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-card">
+        <div class="header-bar">
+            <div>
+                <h1>🛠️ Manage Department</h1>
+                <p style="margin-top: 5px; font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">
+                    ID: #{{ department.id }} | Code: <span style="color: var(--primary);">{{ department.department_code }}</span>
+                </p>
+            </div>
+            <button class="theme-toggle" id="themeToggle">🌓 Theme</button>
+        </div>
+
+        <form method="POST" action="{% url 'manage' department.id %}">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Department Name</label>
+                    <input type="text" name="name" value="{{ department.department_name }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Department Code</label>
+                    <input type="text" name="code" value="{{ department.department_code }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Head of Department (HOD)</label>
+                    <input type="text" name="hod" value="{{ department.head_of_department }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Current Status</label>
+                    <select name="status" id="statusSelect" class="{% if department.status == 'active' %}status-active-glow{% else %}status-inactive-glow{% endif %}">
+                        <option value="active" {% if department.status == 'active' %}selected{% endif %}>✅ Active</option>
+                        <option value="inactive" {% if department.status == 'inactive' %}selected{% endif %}>❌ Inactive</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Contact Email</label>
+                    <input type="email" name="email" value="{{ department.contact_email }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" name="phone" value="{{ department.contact_phone_number }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" name="location" value="{{ department.department_location }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Created By</label>
+                    <input type="text" value="{{ department.created_by }}" readonly>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Description</label>
+                    <textarea name="description">{{ department.department_description }}</textarea>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <a href="/dashboard/" class="cancel-btn">⬅️ Back to Dashboard</a>
+                <button type="submit" class="save-btn">💾 Save Changes</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const root = document.documentElement;
+
+        // Check for saved theme
+        if (localStorage.getItem('theme') === 'light') {
+            root.classList.add('light-theme');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            root.classList.toggle('light-theme');
+            localStorage.setItem('theme', root.classList.contains('light-theme') ? 'light' : 'dark');
+        });
+
+        const statusSelect = document.getElementById('statusSelect');
+        statusSelect.addEventListener('change', function() {
+            this.className = (this.value === 'active') ? 'status-active-glow' : 'status-inactive-glow';
+        });
+    </script>
+</body>
+</html>

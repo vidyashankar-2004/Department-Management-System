@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMS | Global Enterprise Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --accent: #2dd4bf;
+            --bg-dark: #0f111a; 
+            --card-bg: rgba(23, 25, 35, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --input-bg: rgba(0, 0, 0, 0.3);
+        }
+
+        :root.light-theme {
+            --primary: #4f46e5;
+            --bg-dark: #f1f5f9; 
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --input-bg: #f8fafc;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.3s; scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh; 
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.05) 0%, transparent 40%);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 4rem;
+            background: rgba(15, 17, 26, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-box {
+            width: 35px; height: 35px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; color: white;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .main-content {
+            flex: none;
+            display: flex;
+            align-items: center; 
+            justify-content: space-evenly;
+            padding: 40px 20px;
+            perspective: 1500px;
+            min-height: 85vh;
+        }
+
+        .visual-section {
+            position: relative;
+            width: 300px;
+            height: 550px;
+            transform-style: preserve-3d;
+            display: flex; justify-content: center; align-items: flex-end;
+            margin-top: 20px;
+        }
+        .skyscraper {
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotateBuilding 25s linear infinite;
+        }
+        .tier { position: absolute; bottom: 0; left: 50%; transform-style: preserve-3d; transform: translateX(-50%); }
+        .tier-1 { width: 70px; height: 160px; }
+        .tier-2 { width: 45px; height: 280px; }
+        .tier-3 { width: 20px; height: 380px; }
+        .tier-4 { width: 2px; height: 480px; background: var(--accent); box-shadow: 0 0 20px var(--accent); }
+        .side {
+            position: absolute;
+            background: linear-gradient(180deg, rgba(99, 102, 241, 0.2) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .t1-s { width: 70px; height: 160px; } .t2-s { width: 45px; height: 280px; } .t3-s { width: 20px; height: 380px; }
+        .f { transform: translateZ(var(--z)); } .b { transform: rotateY(180deg) translateZ(var(--z)); }
+        .l { transform: rotateY(-90deg) translateZ(var(--z)); } .r { transform: rotateY(90deg) translateZ(var(--z)); }
+
+        .login-card {
+            width: 450px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(45, 212, 191, 0.1);
+            color: var(--accent);
+            padding: 6px 12px; border-radius: 100px;
+            font-size: 0.7rem; font-weight: 700; margin-bottom: 20px;
+        }
+
+        h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; }
+
+        .system-info {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-left: 3px solid var(--primary);
+        }
+        .system-info h4 { font-size: 0.8rem; color: var(--primary); margin-bottom: 5px; text-transform: uppercase; }
+        .system-info p { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
+
+        .input-group label { display: block; font-size: 0.65rem; color: var(--text-muted); font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        .input-field {
+            width: 100%; padding: 12px 16px; background: var(--input-bg);
+            border: 1px solid var(--glass-border); border-radius: 10px; color: var(--text-main); outline: none; margin-bottom: 20px;
+        }
+        .input-field:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+
+        .login-btn {
+            width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none; border-radius: 10px; color: white; font-weight: 700; cursor: pointer;
+            box-shadow: 0 10px 15px rgba(99, 102, 241, 0.2);
+        }
+
+        .discovery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 80px 4rem;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: 0.4s;
+        }
+        .feature-card:hover { transform: translateY(-10px); border-color: var(--primary); }
+
+        .feature-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            filter: grayscale(30%) brightness(80%);
+        }
+
+        .feature-content { padding: 25px; }
+        .feature-content h3 { font-size: 1.1rem; margin-bottom: 10px; color: var(--primary); }
+        .feature-content p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+
+        footer {
+            padding: 2rem 4rem;
+            border-top: 1px solid var(--glass-border);
+            display: flex; justify-content: space-between;
+            font-size: 0.75rem; color: var(--text-muted);
+        }
+
+        @keyframes rotateBuilding { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="logo-box">D</div>
+            <div style="font-weight: 800; font-size: 1.1rem;">DMS <span style="font-weight: 300; opacity: 0.6;">CORE</span></div>
+        </div>
+        <nav style="display: flex; gap: 20px; align-items: center;">
+            <a href="#explore" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px;">EXPLORE</a>
+            <button id="themeToggle" style="cursor:pointer; background: var(--card-bg); border: 1px solid var(--glass-border); color: white; padding: 10px 20px; border-radius: 15px;">🌓 Theme</button>
+        </nav>
+    </header>
+
+    <div class="main-content">
+        <div class="visual-section">
+            <div class="skyscraper">
+                <div class="tier tier-1" style="--z: 35px;"><div class="side t1-s f"></div><div class="side t1-s b"></div><div class="side t1-s l"></div><div class="side t1-s r"></div></div>
+                <div class="tier tier-2" style="--z: 22px;"><div class="side t2-s f"></div><div class="side t2-s b"></div><div class="side t2-s l"></div><div class="side t2-s r"></div></div>
+                <div class="tier tier-3" style="--z: 10px;"><div class="side t3-s f"></div><div class="side t3-s b"></div><div class="side t3-s l"></div><div class="side t3-s r"></div></div>
+                <div class="tier tier-4"></div>
+            </div>
+        </div>
+
+        <div class="login-card">
+            <div class="status-pill">● SECURE ACCESS</div>
+            <h2>HOD Auth Portal</h2>
+            <div class="system-info">
+                <h4>Verified Access</h4>
+                <p>Enter HOD credentials to access the departmental control node.</p>
+            </div>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label>HOD Name</label>
+                    <input type="text" id="hodName" class="input-field" placeholder="Full Name" autocomplete="off" required>
+                </div>
+                <div class="input-group">
+                    <label>Department Code</label>
+                    <input type="password" id="deptCode" class="input-field" placeholder="DEPT-XXXX" autocomplete="off" required>
+                </div>
+                <button type="submit" class="login-btn" id="loginBtn">Authorize Session</button>
+            </form>
+        </div>
+    </div>
+
+    <section class="discovery-grid" id="explore">
+        <div class="feature-card">
+            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=500&q=80" class="feature-img">
+            <div class="feature-content">
+                <h3>Personnel Hub</h3>
+                <p>Manage employee hierarchy and inter-departmental permissions.</p>
+            </div>
+        </div>
+        <div class="feature-card">
+            <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=500&q=80" class="feature-img">
+            <div class="feature-content">
+                <h3>Infrastructure</h3>
+                <p>Monitor physical assets and digital server status globally.</p>
+            </div>
+        </div>
+        <div class="feature-card">
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=500&q=80" class="feature-img">
+            <div class="feature-content">
+                <h3>Data Registry</h3>
+                <p>End-to-end encrypted database for enterprise compliance.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div>© 2026 DMS Enterprise.</div>
+    </footer>
+
+    <script>
+        // Theme toggle logic
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            document.documentElement.classList.toggle('light-theme');
+        });
+
+        // Function to get CSRF token from cookies
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const hodName = document.getElementById('hodName').value;
+            const deptCode = document.getElementById('deptCode').value;
+            const btn = document.getElementById('loginBtn');
+            const csrftoken = getCookie('csrftoken'); // Get token
+
+            btn.textContent = "Connecting...";
+            btn.disabled = true;
+
+            try {
+                // CHANGED: Correct URL matching your urls.py path
+                const response = await fetch('/login_process/', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken // Added CSRF Header
+                    },
+                    body: JSON.stringify({ hodName, deptCode })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    window.location.href = "/dashboard/";
+                } else {
+                    alert(data.message || "Invalid Credentials");
+                    btn.textContent = "Authorize Session";
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                console.error("Connection Error:", error);
+                alert("Server error. Please check your database connection.");
+                btn.textContent = "Authorize Session";
+                btn.disabled = false;
+            }
+        });
+        // Prevents the user from navigating back after reaching login
+            window.history.pushState(null, null, window.location.href);
+            window.onpopstate = function () {
+                window.history.go(1);
+            };
+
+            // Optional: Clear any local storage session data if you used it
+            localStorage.removeItem('session_start');
+            window.onload = function() {
+            // Clear all browser-side storage
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Disable the back button for the login screen
+            window.history.pushState(null, null, window.location.href);
+            window.onpopstate = function () {
+                window.history.go(1);
+            };
+        };
+    </script>
+</body>
+</html>
